@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S3 File Upload & Viewer</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header style="position: relative">
+        <h1>📁 S3 File Manager</h1>
+        <p>Upload images and videos to server, then server uploads to S3</p>
+        <button
+          id="configToggleBtn"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+          "
+          title="Show/Hide Configuration"
+        >
+          ⚙️
+        </button>
+      </header>
+
+      <div id="configPanel" style="display: none">
+        <!-- AWS & S3 Config -->
+        <section class="config-section" style="margin-bottom: 20px">
+          <h3 style="margin-bottom: 10px">AWS Configuration</h3>
+          <label for="awsAccessKeyId"
+            ><strong>AWS_ACCESS_KEY_ID:</strong></label
+          >
+          <input
+            type="text"
+            id="awsAccessKeyId"
+            style="margin-left: 10px; width: 250px"
+          /><br /><br />
+          <label for="awsSecretAccessKey"
+            ><strong>AWS_SECRET_ACCESS_KEY:</strong></label
+          >
+          <input
+            type="password"
+            id="awsSecretAccessKey"
+            style="margin-left: 10px; width: 250px"
+          /><br /><br />
+          <label for="awsRegion"><strong>AWS_REGION:</strong></label>
+          <input
+            type="text"
+            id="awsRegion"
+            value="us-east-1"
+            style="margin-left: 10px; width: 150px"
+          /><br /><br />
+          <h3 style="margin-bottom: 10px">S3 Bucket Configuration</h3>
+          <label for="s3BucketName"><strong>S3_BUCKET_NAME:</strong></label>
+          <input
+            type="text"
+            id="s3BucketName"
+            style="margin-left: 10px; width: 250px"
+          />
+
+          <h3 style="margin-bottom: 10px">Folder Configuration</h3>
+          <label for="tempFolderInput"><strong>Temp Folder:</strong></label>
+          <input
+            type="text"
+            id="tempFolderInput"
+            value="temp"
+            style="margin-left: 10px; width: 200px"
+          />
+        </section>
+      </div>
+
+      <main>
+        <!-- Upload Section -->
+        <section class="upload-section">
+          <h2>📤 Upload File</h2>
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-content">
+              <div class="upload-icon">📷🎥</div>
+              <p>Drag & drop an image or video here or click to browse</p>
+              <p class="upload-info">
+                Files are uploaded to server first, then to S3
+              </p>
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*,video/*"
+                hidden
+              />
+              <button
+                class="browse-btn"
+                onclick="document.getElementById('fileInput').click()"
+              >
+                Choose File
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="upload-progress"
+            id="uploadProgress"
+            style="display: none"
+          >
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p id="progressText">Uploading...</p>
+          </div>
+
+          <div class="upload-result" id="uploadResult" style="display: none">
+            <div class="success-message">
+              <span class="checkmark">✅</span>
+              <span>Upload successful!</span>
+            </div>
+            <div class="file-info">
+              <p><strong>File:</strong> <span id="uploadedFileName"></span></p>
+              <p><strong>Size:</strong> <span id="uploadedFileSize"></span></p>
+              <p><strong>S3 Path:</strong> <span id="uploadedS3Key"></span></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- View Section -->
+        <section class="view-section">
+          <h2>👀 View File</h2>
+          <div class="view-controls">
+            <input
+              type="text"
+              id="fileNameInput"
+              placeholder="Enter filename (e.g., image.jpg, video.mp4)"
+              class="filename-input"
+            />
+            <button class="view-btn" onclick="generateViewUrl()">
+              Generate View URL
+            </button>
+          </div>
+
+          <div class="view-result" id="viewResult" style="display: none">
+            <div class="url-display">
+              <label>View URL:</label>
+              <div class="url-container">
+                <input type="text" id="viewUrl" readonly class="url-input" />
+                <button class="copy-btn" onclick="copyToClipboard('viewUrl')">
+                  📋 Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="file-preview" id="filePreview">
+              <img id="previewImage" alt="Preview" style="display: none" />
+              <video id="previewVideo" controls style="display: none">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Uploads -->
+        <section class="recent-section">
+          <h2>📋 Recent Uploads</h2>
+          <div class="recent-list" id="recentList">
+            <p class="no-uploads">No recent uploads</p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
